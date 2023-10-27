@@ -5,11 +5,12 @@
  import base64
 
  server_url = 'http://papernet.simsam.me/uploads'
- printer_name = 'thermal'  # Replace with the actual printer name
+ printer_name = 'thermal'  
  image_filename = 'captured_image.jpg'
 
- max_width = 384  # Adjust to your printer's paper width
- max_height = 500  # Adjust as needed
+#for the printer out
+ max_width = 384  
+ max_height = 500  
 
  while True:
      try:
@@ -23,40 +24,40 @@
              print('Image uploaded successfully')
 
              try:
-                 # Receive the image from the server
-                 base64_data = response.text  # Assuming the server sends base64-encoded data as text
+               #from server
+                 base64_data = response.text  
                  print('Received base64 data:', base64_data)
 
-                 # Ensure that the base64 data is correctly padded with '=' characters
+                 #decode attempt
                  while len(base64_data) % 4 != 0:
                      base64_data += '='
 
-                 # Decode base64 data to obtain binary image data
+                 #decode attempt
                  image_data = base64.b64decode(base64_data)
                  print('Decoded image data:', image_data)
 
-                 # Check if the data is in a valid image format
+                 #more decode attempt
                  image_format = imghdr.what(None, h=image_data)
                  if image_format:
                      # The data appears to be in a recognized image format
 
-                     # Load the image with Pillow
+                     #try to load
                      img = Image.open(io.BytesIO(image_data))
 
-                     # Resize the image to fit the printer page
+                     #fit 2 printer sheet
                      width, height = img.size
                      if width > max_width:
                          new_width = max_width
                          new_height = int((max_width / width) * height)
                          img = img.resize((new_width, new_height))
 
-                     # Convert the resized image to PNG format
+                     #convert 2 png
                      png_image = img.convert('RGB')
 
-                     # Save the PNG image to a file
+                     #save as png
                      png_image.save(image_filename, format='PNG')
 
-                     # Use the lp command to print the PNG image
+                     #print
                      print_command = f'lp -d {printer_name} -o fit-to-page {image_filename}'
                      subprocess.run(print_command, shell=True)
                  else:
