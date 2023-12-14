@@ -24,29 +24,29 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Endpoint to receive images from the server
+// recieve pics from server
 app.post('/server-uploads', (req, res) => {
-  const base64Image = req.body.image; // Assuming the image is sent as a base64 string
+  const base64Image = req.body.image; //sending image as base64 / sendable stream
   const imageBuffer = Buffer.from(base64Image, 'base64');
 
-  // Emit the image to connected clients (Raspberry Pi 2)
+  // send image to all connected clients (via client.py)
   io.emit('image', {
-    data: base64Image, // Sending base64 to clients
-    filename: req.body.filename, // Send the filename
+    data: base64Image, // send base64 to all clients
+    filename: req.body.filename, // send file name
   });
 
   res.status(200).send('Image received and broadcasted successfully');
 });
 
-// Endpoint to receive images from the client
+// recieve images from client.py 
 app.post('/uploads', upload.single('image'), (req, res) => {
-  // Process the uploaded image (e.g., save it)
-  const imagePath = req.file.path; // Path to the uploaded image
+  // save image
+  const imagePath = req.file.path; // uploaded image path
 
-  // Emit the image to connected clients (Raspberry Pi 2)
+  // send image to clients
   io.emit('image', {
-    data: fs.readFileSync(imagePath, 'base64'), // Read and encode the image as base64
-    filename: req.file.originalname, // Send the original filename
+    data: fs.readFileSync(imagePath, 'base64'), // read and encode image as base64
+    filename: req.file.originalname, // send filename
   });
 
   res.status(200).send('Image uploaded and broadcasted successfully');
