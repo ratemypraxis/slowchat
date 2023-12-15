@@ -1,0 +1,16 @@
+# UNFINISHED FILE. DO NOT RUN YET
+# we will need a requirements.txt for both client/server before building this
+
+FROM python
+
+WORKDIR /app
+
+COPY . /app
+
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
+ENV PORT=80
+
+EXPOSE 80
+
+CMD ["python", "./tcpTest/sender.py"] 
