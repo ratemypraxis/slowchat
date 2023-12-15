@@ -21,9 +21,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
             print(f"Connected by {addr}")
 
             # Receive image data
-            image_data = conn.recv(1024)
-            while image_data:
-                image_data += conn.recv(1024)
+            image_data = b''
+            while True:
+                chunk = conn.recv(1024)
+                if not chunk:
+                    break
+                image_data += chunk
 
             print("Image received successfully")
 
