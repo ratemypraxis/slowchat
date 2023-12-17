@@ -6,7 +6,7 @@ from PIL import Image
 
 # Configurations
 server_ip = "0.0.0.0"
-server_port = 80
+server_port = 8080
 
 # Create a socket to listen for incoming connections
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
