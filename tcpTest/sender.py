@@ -1,36 +1,37 @@
-# sender.py / use w normal webcam
-import time
+import subprocess
 import socket
-import cv2
+import time
 from io import BytesIO
 
 # Configurations
-image_filename = "captured_image.jpg"  # Specify the desired file path
-receiver_ip = "receiver_pi_ip"  # Replace with the IP of the receiver Pi
-receiver_port = 80
+receiver_ip = "10.23.11.42"  # Replace with the IP of the receiver Pi
+receiver_port = 8080
+capture_interval = 30  # seconds
 
 while True:
     try:
-        # Capture image from the built-in webcam
-        cap = cv2.VideoCapture(0)
-        ret, frame = cap.read()
-        cap.release()
+        # Generate a unique filename based on the current timestamp
+        timestamp = time.strftime("%Y%m%d%H%M%S")
+        image_filename = f"image_{timestamp}.jpg"
 
-        # Save the captured image to a file
-        cv2.imwrite(image_filename, frame)
+        # Run libcamera-still command
+        subprocess.run(["libcamera-still", "-o", image_filename])
 
-        # Convert image to JPEG format
-        _, img_encoded = cv2.imencode('.jpg', frame)
-        img_bytes = img_encoded.tobytes()
+        print(f"Image captured: {image_filename}")
+
+        # Read the captured image
+        with open(image_filename, "rb") as image_file:
+            img_bytes = image_file.read()
 
         # Connect to receiver Pi and send image
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((receiver_ip, receiver_port))
             s.sendall(img_bytes)
 
-        print(f"Image saved to {image_filename} and sent successfully")
+        print(f"Image sent successfully")
 
     except Exception as e:
         print(f"Error: {e}")
 
-    time.sleep(30)
+    # Wait for the next capture interval
+    time.sleep(capture_interval)
