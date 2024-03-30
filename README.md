@@ -1,6 +1,8 @@
 # How to join our slow, paper-based video chat network!
 *Note: this is only currently applicable for folks with access to our school's development WiFi network, we hope to build an HTTPS version of this system next!*
 
+Station 1                           |  Station 2
+:----------------------------------:|:----------------------------------:
 | ![station 1](images/station1.png) | ![station 2](images/station2.png) |
 
 
